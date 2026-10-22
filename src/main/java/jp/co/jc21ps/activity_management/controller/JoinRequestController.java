@@ -18,6 +18,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.util.ObjectUtils;
 
 @Controller
 @RequestMapping("/joinRequest")
@@ -82,7 +83,17 @@ public class JoinRequestController {
         /*
          * TODO ➊ 初期表示情報取得結果に応じて、以下の条件文を完成させる。
          */
+        if (responseForm.isEmpty()) {
+            // messages.propertiesからメッセージを取得
+           String notRequestClubMessage = messageSource.getMessage("notRequestClubMessage", null, Locale.getDefault());
+            mav.addObject("notRequestClubMessage", notRequestClubMessage);
+        } else {
+            mav.addObject("joinRequestSaveForm", responseForm);
+        }
 
+        if(!ObjectUtils.isEmpty(paramForm.getMessage())) {
+            mav.addObject("joinRequestCompleteMessage", paramForm.getMessage());
+        }
         mav.addObject("leaderClubId", leaderClubId);
 
         // 部員登録申請画面に遷移
@@ -118,8 +129,24 @@ public class JoinRequestController {
             /*
              * TODO ➋ インサートの成功、失敗に応じて、処理を変更する。
              */
+            if (result) {
+                // ① 登録処理の返値がTrueの場合
+                // メッセージプロパティから "joinRequestCompleteMessage" を取得する
+                String joinRequestCompleteMessage = messageSource.getMessage("joinRequestCompleteMessage", null, Locale.getDefault());
+                
+                // formにセットし、さらにオブジェクト（フラッシュ属性またはモデル）に追加する
+                paramForm.setMessage(joinRequestCompleteMessage);
+                redirectAttributes.addFlashAttribute("joinOkMessage", paramForm.getMessage());
+                
+                // /joinRequest にリダイレクトする
+                mav.setViewName("redirect:/joinRequest");
+            } else {
+                // ② それ以外（Falseの場合）：エラー画面に遷移する
+                mav.setViewName("error");
+            }
 
         } catch (Exception e) {
+            e.printStackTrace();
             mav.setViewName("error");
         }
         return mav;
