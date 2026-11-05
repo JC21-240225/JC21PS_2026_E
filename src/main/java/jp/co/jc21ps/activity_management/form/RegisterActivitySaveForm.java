@@ -7,6 +7,7 @@ import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -22,6 +23,8 @@ public class RegisterActivitySaveForm {
     private String clubId;
 
     // 活動名
+    @NotEmpty 
+    @Size(max = 30, message = "活動名は30文字以内で入力してください。")
     /*
      * TODO ➊ activityNameに対し、バリデーションの条件を付与する
      * 1.空白、nullを制御
@@ -31,6 +34,8 @@ public class RegisterActivitySaveForm {
     private String activityName;
 
     // 活動日
+    @NotBlank(message = "活動日の入力は必須です。")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     /*
      * TODO ➋ activityDateに対し、バリデーションの条件を付与する
      * 1.空白、nullを制御 (ヒント : @○○(message = "{NotBlank}"))
@@ -55,6 +60,8 @@ public class RegisterActivitySaveForm {
     }
 
     // 活動場所
+    @NotBlank(message = "活動場所の入力は必須です。")
+    @Size(max = 30, message = "活動場所は30文字以内で入力してください。")
     /*
      * TODO ➌ activityDateに対し、バリデーションの条件を付与する
      * 1.空白、nullを制御 (ヒント : @○○(message = "{NotBlank}"))
@@ -68,7 +75,7 @@ public class RegisterActivitySaveForm {
      * 1.空白、nullを制御 (ヒント : @○○(message = "{NotBlank}"))
      */
     // 活動時間(自)
-
+    @NotBlank(message = "活動場所(自)の入力は必須です。")
     @Pattern(regexp = "^(?:[01]\\d|2[0-3]):[0-5]\\d$", message = "{Pattern.activityStartTime}") // hh:mm形式
     private String activityStartTime;
 
@@ -77,7 +84,7 @@ public class RegisterActivitySaveForm {
      * TODO ➎ activityEndTimeに対し、バリデーションの条件を付与する
      * 1.空白、nullを制御 (ヒント : @○○(message = "{NotBlank}"))
      */
-
+    @NotBlank(message = "活動場所(至)の入力は必須です。")
     @Pattern(regexp = "^(?:[01]\\d|2[0-3]):[0-5]\\d$", message = "{Pattern.activityEndTime}") // hh:mm形式
     private String activityEndTime;
 
@@ -112,6 +119,9 @@ public class RegisterActivitySaveForm {
      * 2.入力値制御(ヒント : @○○(max = ○○, message = "{Size}")
      */
 
+    
+    @NotBlank(message = "活動説明の入力は必須です。")
+    @Size(max = 400, message = "活動説明は30文字以内で入力してください。")
     private String activityDescription;
 
     // 募集人数
@@ -121,7 +131,9 @@ public class RegisterActivitySaveForm {
      * 2.最小値制御(ヒント : @○○(value = ○, message = "{Min}")
      * 3.最大値制御(ヒント : @○○(value = ○○, message = "{Max}")
      */
-
+    @NotBlank(message = "募集人数は半角数字で入力してください。")
+    @Min(value = 1, message = "募集人数は1人以上を入力してください。")
+    @Max(value = 100, message = "募集人数は100人以下を入力してください。")
     @Pattern(regexp = "^[0-9]*$", message = "{Pattern.maxParticipant}") // 半角数字
 
     private String maxParticipant;

@@ -76,11 +76,12 @@ public class RegisterActivityController {
             BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session) {
 
         ModelAndView mav = new ModelAndView();
-
+        
         /*
          * TODO ➊ セッションからuserIdを取得する
          */
-
+        SessionDto sessionDto = commonService.getSessionDto(session);
+        String leaderClubId = sessionDto.getClubId();
         // バリデーションエラー
         if (bindingResult.hasErrors()) {
             mav.addObject("registerActivitySaveForm", paramForm);
@@ -103,6 +104,14 @@ public class RegisterActivityController {
              * TODO ➋ activitySaveDtoに、パラメータをsetする。
              */
 
+            activitySaveDto.setClubId(leaderClubId);
+            activitySaveDto.setActivityName(paramForm.getActivityName());
+            activitySaveDto.setActivityDate(paramForm.getActivityDate());
+            activitySaveDto.setActivityPlace(paramForm.getActivityPlace());
+            activitySaveDto.setActivityStartTime(paramForm.getActivityStartTime());
+            activitySaveDto.setActivityEndTime(paramForm.getActivityEndTime());
+            activitySaveDto.setActivityDescription(paramForm.getActivityDescription());
+            activitySaveDto.setMaxParticipant(paramForm.getMaxParticipant());
             // サービスからinsertメソッドを呼び出す
             String resultMessageKey = registerActivityService.insertActivity(activitySaveDto);
 
@@ -123,6 +132,7 @@ public class RegisterActivityController {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             // DB接続に失敗した場合、エラー画面に遷移
             mav.setViewName("error");
         }
